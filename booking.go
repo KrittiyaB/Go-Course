@@ -63,8 +63,8 @@ func booking(c *gin.Context) {
 	collection := connectDB()
 	res, err := collection.InsertOne(ctx, booking)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 	fmt.Printf("return ---> %+v\n", res.InsertedID)
 	c.JSON(http.StatusOK, booking)
@@ -75,7 +75,7 @@ func findBooking(c *gin.Context) {
 
 	collection := connectDB()
 	ctx := context.TODO()
-	cur, err := collection.Find(ctx, bson.D{})
+	cur, err := collection.Find(ctx, bson.D{}, options.Find().SetSort(bson.M{"start":1}))
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -102,18 +102,19 @@ func findBookingById(c *gin.Context) {
 	collection := connectDB()
 	cur, err := collection.Find(ctx, bson.M{"id": id})
 	if err != nil {
-		log.Print(err)
-		os.Exit(1)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 	defer cur.Close(ctx)
-	var result bson.M
+	var book Booking
 	for cur.Next(ctx) {
-
-		if err := cur.Decode(&result); err != nil {
+		if err := cur.Decode(&book); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n", book)
 	}
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, book)
 }
 
 func cancelBooking(c *gin.Context) {

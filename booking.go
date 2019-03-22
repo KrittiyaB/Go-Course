@@ -75,7 +75,9 @@ func findBooking(c *gin.Context) {
 
 	collection := connectDB()
 	ctx := context.TODO()
-	cur, err := collection.Find(ctx, bson.D{}, options.Find().SetSort(bson.M{"start":1}))
+	options := options.FindOptions{}
+	options.Sort = bson.D{{"start", 1}}
+	cur, err := collection.Find(ctx, bson.D{}, &options)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

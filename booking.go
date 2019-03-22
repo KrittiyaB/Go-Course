@@ -66,7 +66,7 @@ func booking(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	fmt.Printf("return ---> %+v\n", res.InsertedID)
+	log.Printf("return %+v\n", res.InsertedID)
 	c.JSON(http.StatusOK, booking)
 }
 
@@ -91,7 +91,7 @@ func findBooking(c *gin.Context) {
 			return
 		}
 		books = append(books, book)
-		fmt.Printf("%+v\n", book)
+		log.Printf("%+v\n", book)
 	}
 	c.JSON(http.StatusOK, books)
 }
@@ -114,7 +114,7 @@ func findBookingById(c *gin.Context) {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		fmt.Printf("%+v\n", book)
+		log.Printf("%+v\n", book)
 	}
 	c.JSON(http.StatusOK, book)
 }

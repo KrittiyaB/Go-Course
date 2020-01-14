@@ -137,6 +137,7 @@ func cancelBooking(c *gin.Context) {
 }
 
 func main() {
+	log.Println("test")
 	router := gin.Default()
 	book := router.Group("/bookings")
 	{
